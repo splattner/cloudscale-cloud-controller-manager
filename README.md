@@ -4,10 +4,14 @@
 The cloudscale.ch cloud controller mangager integrates your Kubernets cluster with the cloudscale.ch Cloud API.
 Read more about kubernetes cloud controller managers in the [kubernetes documentation](https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/).
 
+## Credits
+
+* Based on the Work of https://github.com/hetznercloud/hcloud-cloud-controller-manager
+
 ## Features
 
 - **instances interface**
-Adds the server type to the `beta.kubernetes.io/instance-type` label, sets the external ipv4 and ipv6 addresses and deletes nodes from Kubernetes that were deleted from the Hetzner Cloud.
+Adds the server type to the `beta.kubernetes.io/instance-type` label, sets the external ipv4 and ipv6 addresses and deletes nodes from Kubernetes that were deleted from the cloudscale.ch Cloud.
 - **zones interface**
 Makes Kubernetes aware of the failure domain of the server by setting the `failure-domain.beta.kubernetes.io/region` and `failure-domain.beta.kubernetes.io/zone` labels on the node.
 
@@ -53,14 +57,14 @@ status:
 
 This deployment example uses `kubeadm` to bootstrap an Kubernetes cluster, with [flannel](https://github.com/coreos/flannel) as overlay network agent. Feel free to adapt the steps to your preferred method of installing Kubernetes.
 
-These deployment instructions are designed to guide with the installation of the `hcloud-cloud-controller-manager` and are by no means an in depth tutorial of setting up Kubernetes clusters.
+These deployment instructions are designed to guide with the installation of the `cloudscale-cloud-controller-manager` and are by no means an in depth tutorial of setting up Kubernetes clusters.
 **Previous knowledge about the involved components is required.**
 
 Please refer to the [kubeadm cluster creation guide](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/), which these instructions are meant to argument and the [kubeadm documentation](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/).
 
 1. The cloud controller manager adds its labels when a node is added to the cluster. This means we have to add the `--cloud-provider=external` flag to the `kubelet` before initializing the cluster master with `kubeadm init`.
 To do accomplish this we add this systemd drop-in unit:
-`/etc/systemd/system/kubelet.service.d/20-hcloud.conf`
+`/etc/systemd/system/kubelet.service.d/20-cloudcale.conf`
 
 ```
 [Service]
@@ -96,13 +100,13 @@ kubectl -n kube-system patch ds kube-flannel-ds --type json -p '[{"op":"add","pa
 6. Create a secret containing your Hetzner Cloud API token.
 
 ```sh
-kubectl -n kube-system create secret generic hcloud --from-literal=token=<hcloud API token>
+kubectl -n kube-system create secret generic cloudscale --from-literal=access-token=<cloudscale API token>
 ```
 
-7. Deploy the `hcloud-cloud-controller-manager`:
+7. Deploy the `cloudscale-cloud-controller-manager`:
 
 ```
-kubectl apply -f  https://raw.githubusercontent.com/hetznercloud/hcloud-cloud-controller-manager/master/deploy/v1.2.0.yaml
+kubectl apply -f  https://raw.githubusercontent.com/splattner/hcloud-cloud-controller-manager/master/deploy/v1.0.0.yaml
 
 ```
 

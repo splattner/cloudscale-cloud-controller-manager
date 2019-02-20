@@ -49,11 +49,11 @@ func newCloud(config io.Reader) (cloudprovider.Interface, error) {
 		return nil, fmt.Errorf("environment variable %q is required", nodeNameENVVar)
 	}
 
-	token := &oauth2.Token{AccessToken: token}
-	tokenSource := oauth2.StaticTokenSource(token)
+	oauthtoken := &oauth2.Token{AccessToken: token}
+	tokenSource := oauth2.StaticTokenSource(oauthtoken)
 	oauthClient := oauth2.NewClient(oauth2.NoContext, tokenSource)
 
-	client = cloudscale.NewClient(oauthClient)
+	client := cloudscale.NewClient(oauthClient)
 
 	return &cloud{
 		client:    client,

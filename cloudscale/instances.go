@@ -19,11 +19,11 @@ package cloudscale
 import (
 	"context"
 	"errors"
-	"strconv"
+	"strings"
 
+	cloudscale "github.com/cloudscale-ch/cloudscale-go-sdk"
 	"k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
-	cloudscale "github.com/cloudscale-ch/cloudscale-go-sdk"
 )
 
 type instances struct {
@@ -35,7 +35,6 @@ func newInstances(client *cloudscale.Client) *instances {
 }
 
 func (i *instances) NodeAddressesByProviderID(providerID string) ([]v1.NodeAddress, error) {
-
 
 	server, err := getServerByID(i.client, providerID)
 	if err != nil {
@@ -61,7 +60,7 @@ func (i *instances) InstanceID(nodeName types.NodeName) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return strconv.Itoa(server.uuid), nil
+	return server.UUID, nil
 }
 
 func (i *instances) InstanceType(nodeName types.NodeName) (string, error) {
@@ -69,7 +68,7 @@ func (i *instances) InstanceType(nodeName types.NodeName) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return server.Flavor, nil
+	return server.Flavor.Name, nil
 }
 
 func (i *instances) InstanceTypeByProviderID(providerID string) (string, error) {
@@ -77,7 +76,7 @@ func (i *instances) InstanceTypeByProviderID(providerID string) (string, error) 
 	if err != nil {
 		return "", err
 	}
-	return server.Flavor, nil
+	return server.Flavor.Name, nil
 }
 
 func (i *instances) AddSSHKeyToAllInstances(user string, keyData []byte) error {
@@ -91,7 +90,7 @@ func (i *instances) CurrentNodeName(hostname string) (types.NodeName, error) {
 func (i instances) InstanceExistsByProviderID(providerID string) (exists bool, err error) {
 
 	var server *cloudscale.Server
-	server, _, err = i.client.Server.Get(context.Background(), providerID)
+	server, err = i.client.Servers.Get(context.Background(), providerID)
 	if err != nil {
 		return
 	}
@@ -105,10 +104,10 @@ func nodeAddresses(server *cloudscale.Server) []v1.NodeAddress {
 	var publicIP = ""
 
 	for iface := range server.Interfaces {
-		if iface.Type == "public" {
-			for address : range iface.Addresses {
-				if address.version == 4 {
-					publicIP = address.address
+		if strings.Compare(server.Interfaces[iface].Type, "public") == 0 {
+			for address := range server.Interfaces[iface].Adresses {
+				if server.Interfaces[iface].Adresses[address].Version == 4 {
+					publicIP = server.Interfaces[iface].Adresses[address].Address
 				}
 			}
 		}

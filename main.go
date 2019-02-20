@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/splattner/cloudscale-cloud-controller-manager/cloudscale"
 	"k8s.io/apiserver/pkg/util/flag"
 	"k8s.io/apiserver/pkg/util/logs"
 	"k8s.io/kubernetes/cmd/cloud-controller-manager/app"

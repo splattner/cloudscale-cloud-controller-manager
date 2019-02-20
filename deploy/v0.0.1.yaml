@@ -49,7 +49,7 @@ spec:
       - key: "node-role.kubernetes.io/master"
         effect: NoSchedule
       containers:
-      - image: splattner/cloudscale-cloud-controller-manager:v1.0.0
+      - image: splattner/cloudscale-cloud-controller-manager:v0.0.1
         name: cloudscale-cloud-controller-manager
         command:
         - "/bin/cloudscale-cloud-controller-manager"
@@ -69,4 +69,4 @@ spec:
           valueFrom:
             secretKeyRef:
               name: cloudscale
-              key: token
+              key: access-token

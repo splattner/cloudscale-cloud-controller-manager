@@ -18,8 +18,6 @@ package cloudscale
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 	"strings"
 
 	cloudscale "github.com/cloudscale-ch/cloudscale-go-sdk"
@@ -28,13 +26,11 @@ import (
 
 func getServerByName(c *cloudscale.Client, name string) (server *cloudscale.Server, err error) {
 
-	allServer, err := c.Server.List(context.Background())
+	allServer, err := c.Servers.List(context.Background())
 
-	var server
-
-	for currentServer := range allServer {
-		if server.Name == name {
-			server = currentServer
+	for i := range allServer {
+		if strings.Compare(allServer[i].Name, name) == 0 {
+			server = &allServer[i]
 			break
 		}
 	}
@@ -49,8 +45,8 @@ func getServerByName(c *cloudscale.Client, name string) (server *cloudscale.Serv
 	return
 }
 
-func getServerByID(c *cloudscale.Client, id int) (server *cloudscale.Server, err error) {
-	server, _, err = c.Server.Get(context.Background(), id)
+func getServerByID(c *cloudscale.Client, id string) (server *cloudscale.Server, err error) {
+	server, err = c.Servers.Get(context.Background(), id)
 	if err != nil {
 		return
 	}

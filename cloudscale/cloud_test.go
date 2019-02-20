@@ -117,8 +117,8 @@ func TestCloud(t *testing.T) {
 	})
 
 	t.Run("ProviderName", func(t *testing.T) {
-		if cloud.ProviderName() != "hcloud" {
-			t.Error("ProviderName should be hcloud")
+		if cloud.ProviderName() != "cloudscale" {
+			t.Error("ProviderName should be cloudscale")
 		}
 	})
 }

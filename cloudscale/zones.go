@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package hcloud
+package cloudscale
 
 import (
 	cloudscale "github.com/cloudscale-ch/cloudscale-go-sdk"
@@ -42,12 +42,8 @@ func (z zones) GetZone() (zone cloudprovider.Zone, err error) {
 }
 
 func (z zones) GetZoneByProviderID(providerID string) (zone cloudprovider.Zone, err error) {
-	var id int
-	if id, err = providerIDToServerID(providerID); err != nil {
-		return
-	}
 	var server *cloudscale.Server
-	server, err = getServerByID(z.client, id)
+	server, err = getServerByID(z.client, providerID)
 	if err != nil {
 		return
 	}
